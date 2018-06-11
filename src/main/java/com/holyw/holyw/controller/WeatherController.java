@@ -49,7 +49,7 @@ public class WeatherController {
     }
 
 
-    @Scheduled(cron = "0 0/2 * * * *")
+    @Scheduled(cron = "0/30 * * * * *")
     public void timer() {
         boolean flag = true;
         try {
