@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+
+    <display-name>holyw</display-name>
+
+    <!-- Spring ApplicationContext配置文件的路径,可使用通配符,多个路径用,号分隔 此参数用于后面的Spring Context
+        Loader -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>classpath:log4j.properties</param-value>
+    </context-param>
+
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++  servlet  +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!-- springmvc -->
+   <servlet>
+        <servlet-name>springmvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:springmvc-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springmvc</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++  AccessFilter  +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <filter>
+        <filter-name>accessFilter</filter-name>
+        <filter-class>com.yunji.cemSys.filter.AccessFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>accessFilter</filter-name>
+        <url-pattern>*</url-pattern>
+    </filter-mapping>
+
+    <!-- 发布webservice 服务
+    <servlet>
+        <servlet-name>AxisServlet</servlet-name>
+        <servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/servlet/AxisServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>*.jws</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>-->
+    
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++  listener  +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- 日志 -->
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    <!-- Spring 刷新Introspector防止内存泄露 -->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
+    <!--Spring的ApplicationContext 载入-->
+    <listener>
+        <listener-class>com.yunji.common.orm.spring.SpringLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.yunji.common.orm.spring.MyServletContextListener</listener-class>
+    </listener>
+    
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++  filter  +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Character Encoding filter -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- Hibernate Open Session In View filter -->
+    <filter>
+        <filter-name>hibernateOpenSessionInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.hibernate5.support.OpenSessionInViewFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>hibernateOpenSessionInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- 解决rest时put方式提交无法获取表单数据 -->
+    <filter>
+        <filter-name>httpPutFormContentFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>httpPutFormContentFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++  other  +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- session超时定义,单位为分钟 -->
+    <session-config>
+        <session-timeout>600</session-timeout>
+    </session-config>
+
+    <welcome-file-list>
+        <welcome-file>login.html</welcome-file>
+    </welcome-file-list>
+
+    <!-- 用于支持多个应用在同个TOMCAT中启动 -->
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>holyw.root</param-value>
+    </context-param>
+
+    <!-- 复写 tomcat web.xml 常见资源的 mime-type 类型，使之下载而非直接在浏览器中打开 -->
+    <!-- 注意！.css .js 等 web资源文件切勿轻易修改其 mime-type 类型，会导致读取错误 -->
+    <mime-mapping><extension>txt</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>ini</extension><mime-type>application/download</mime-type></mime-mapping>
+
+    <mime-mapping><extension>jpg</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>jpeg</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>png</extension><mime-type>application/download</mime-type></mime-mapping>
+
+    <mime-mapping><extension>pdf</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>chm</extension><mime-type>application/download</mime-type></mime-mapping>
+
+    <mime-mapping><extension>doc</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>docx</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>ppt</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>pptx</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>xls</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>xlsx</extension><mime-type>application/download</mime-type></mime-mapping>
+
+    <mime-mapping><extension>rar</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>zip</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>7z</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>tar</extension><mime-type>application/download</mime-type></mime-mapping>
+    <mime-mapping><extension>gz</extension><mime-type>application/download</mime-type></mime-mapping>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.css</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.less</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.woff</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.ttf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.svg</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.eot</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.js</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.png</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.jpg</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.gif</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.ico</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.html</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.bmp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.map</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.swf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.flv</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.mp4</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.woff2</url-pattern>
+    </servlet-mapping>
+
+
+</web-app>
