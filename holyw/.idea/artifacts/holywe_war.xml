@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="holywe:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="holyw-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="holywe:war exploded" />
+    </root>
+  </artifact>
+</component>
