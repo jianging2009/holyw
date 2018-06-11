@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>九宫格</title>
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <script src="http://192.168.3.145:8088/holyw/js/jquery.min.js"></script>
+    <style type="text/css">
+        a, body, center, cite, code, dd, del, div, dl, dt, em, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, header, hr, html, img, input, label, legend, li, mark, ol, p, section, span, strong, textarea, time, ul, var input{
+            margin: 0;
+            border: 0;
+            padding: 0;
+            font-style: normal;
+            color: #323232;
+            box-sizing: border-box;
+            -moz-box-sizing:border-box; /* Firefox */
+            -webkit-box-sizing:border-box; /* Safari */
+        }
+        html,body{
+            background: #fff;
+        }
+        ul{
+            text-decoration: none;
+            list-style-type: none;
+        }
+        .video_list>li{
+            float: left;
+            width: 32%;
+            text-align: center;
+            border: 1px solid #ccc;
+            padding-top: 31%;
+            margin-left: 1%;
+            margin-top: 1%;
+            position: relative;
+        }
+        .video_list>li>div{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #09BE07;
+        }
+        .video_list>li>div>span{
+            display: inline-block;
+            margin-top: 50%;
+            -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+<ul class="video_list">
+    <li><div id="fileList1"><input type="file" id="fileElem1" multiple accept="image/*"  onchange="handleFiles(this)"></div></li>
+    <li><div id="fileList2"></div></li>
+    <li><div id="fileList3"><span>3</span></div></li>
+    <li><div id="fileList4"><span>4</span></div></li>
+    <li><div id="fileList5"><span>5</span></div></li>
+    <li><div id="fileList6"><span>6</span></div></li>
+    <li><div id="fileList7"><span>7</span></div></li>
+    <li><div id="fileList8"><span>8</span></div></li>
+    <li><div id="fileList9"><span>9</span></div></li>
+</ul>
+</body>
+<script type="text/javascript">
+    window.URL = window.URL || window.webkitURL;
+    var fileElem = document.getElementById("fileElem1"),
+            fileList = document.getElementById("fileList1");
+    function handleFiles(obj) {
+        var files = obj.files,
+                img = new Image();
+
+        if(window.URL){
+            //File API
+            //alert(files[0].name + "," + files[0].size + " bytes");
+            img.src = window.URL.createObjectURL(files[0]); //创建一个object URL，并不是你的本地路径
+            img.width = 114;
+            img.onload = function(e) {
+                window.URL.revokeObjectURL(this.src); //图片加载后，释放object URL
+            }
+            img.style = 'margin-left: 10%;';
+
+            fileList.appendChild(img);
+
+            $('#fileElem1').remove();
+
+
+            $('#fileElem2').appendTo('<input type="file" id="fileElem'+2+'" multiple accept="image/*"  onchange="handleFiles(this)">')
+            fileElem = document.getElementById("fileElem2"),
+                    fileList = document.getElementById("fileList2");
+
+
+        }else if(window.FileReader){
+            //opera不支持createObjectURL/revokeObjectURL方法。我们用FileReader对象来处理
+            var reader = new FileReader();
+            reader.readAsDataURL(files[0]);
+            reader.onload = function(e){
+                //alert(files[0].name + "," +e.total + " bytes");
+                img.src = this.result;
+                img.width = 200;
+                img.style = 'margin-left: 35%';
+                fileList.appendChild(img);
+            }
+        }else{
+            //ie
+            obj.select();
+            obj.blur();
+            var nfile = document.selection.createRange().text;
+            document.selection.empty();
+            img.src = nfile;
+            img.width = 200;
+            img.onload=function(){
+                alert(nfile+","+img.fileSize + " bytes");
+            }
+            fileList.appendChild(img);
+        }
+    }
+
+    $(function () {
+
+    })
+</script>
+</html>
